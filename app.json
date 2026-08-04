@@ -3,7 +3,7 @@
     "name": "Karibu For Schools",
     "slug": "karibu-for-schools",
     "scheme": "karibuforschools",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -22,7 +22,7 @@
     ],
     "android": {
       "package": "global.karibu.forschools",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#111111"
@@ -31,12 +31,6 @@
     "ios": {
       "bundleIdentifier": "global.karibu.forschools",
       "supportsTablet": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "c22e17a1-aa9a-4527-bebf-28e12bdba6c8"
-      }
     }
   }
 }

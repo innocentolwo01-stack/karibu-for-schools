@@ -1,3 +1,31 @@
-import { router } from 'expo-router'; import { StyleSheet, Text, View } from 'react-native'; import { Card, Header, Money, Pill, Screen } from '@/components/ui'; import { trips } from '@/data/mock'; import { useApp } from '@/context/AppContext'; import { colors } from '@/constants/theme';
-export default function Trips(){const {paidTrips,tripConsent}=useApp();return <Screen><Header title="Trips and events" subtitle="Consent, details and payments" back onBack={()=>router.back()}/>{trips.map(t=><Card key={t.id} style={s.card}><View style={s.top}><View style={s.icon}><Text style={{fontSize:28}}>🚌</Text></View><View style={{flex:1}}><Text style={s.title}>{t.title}</Text><Text style={s.sub}>{t.date} · {t.destination}</Text></View></View><Money value={t.amount} style={s.money}/><View style={s.status}><Pill label={tripConsent[t.id]?'CONSENT GIVEN':'CONSENT NEEDED'} tone={tripConsent[t.id]?'green':'yellow'}/><Pill label={paidTrips[t.id]?'PAID':'PAYMENT DUE'} tone={paidTrips[t.id]?'green':'red'}/></View><Text style={s.open} onPress={()=>router.push(`/parent/trip/${t.id}` as any)}>View trip details →</Text></Card>)}</Screen>}
-const s=StyleSheet.create({card:{marginBottom:12},top:{flexDirection:'row',gap:12,alignItems:'center'},icon:{width:52,height:52,borderRadius:16,backgroundColor:colors.paleYellow,alignItems:'center',justifyContent:'center'},title:{fontSize:17,fontWeight:'900'},sub:{color:colors.muted,marginTop:4},money:{fontSize:24,fontWeight:'900',marginTop:18},status:{flexDirection:'row',gap:7,marginTop:12},open:{color:colors.red,fontWeight:'900',marginTop:16}})
+import { router } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
+import { Card, Header, Money, Pill, Screen, Section } from '@/components/ui';
+import { trips } from '@/data/mock';
+import { colors } from '@/constants/theme';
+import { useApp } from '@/context/AppContext';
+
+export default function Trips() {
+  const { data, selectedChild } = useApp();
+  return (
+    <Screen>
+      <Header title="Trips and events" subtitle={`${selectedChild.name} · Payment and consent`} back onBack={() => router.back()} />
+      <Section title="Upcoming" />
+      {trips.map(trip => {
+        const paid = Boolean(data.paidTrips[trip.id]);
+        const storedConsent = data.moduleState[`consent:${trip.id}`];
+        const consent = typeof storedConsent === 'boolean' ? storedConsent : data.tripConsent[trip.id];
+        return <Card key={trip.id} style={styles.trip}><View style={styles.top}><Pill label={paid ? 'PAID' : 'PAYMENT DUE'} tone={paid ? 'green' : 'red'} /><Pill label={consent === true ? 'CONSENT GIVEN' : consent === false ? 'DECLINED' : 'CONSENT NEEDED'} tone={consent === true ? 'green' : consent === false ? 'red' : 'yellow'} /></View><Text style={styles.title}>{trip.title}</Text><Text style={styles.sub}>{trip.date} · {trip.destination}</Text><Money value={trip.amount} style={styles.amount} /><Text style={styles.link} onPress={() => router.push(`/parent/trip/${trip.id}` as never)}>Open trip details →</Text></Card>;
+      })}
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  trip: { marginBottom: 10 },
+  top: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
+  title: { fontSize: 19, fontWeight: '900', marginTop: 14 },
+  sub: { color: colors.muted, marginTop: 6 },
+  amount: { fontSize: 22, fontWeight: '900', marginTop: 14 },
+  link: { color: colors.red, fontWeight: '900', marginTop: 14 },
+});

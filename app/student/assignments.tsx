@@ -1,3 +1,2 @@
-import { router } from 'expo-router'; import { StyleSheet, Text, View } from 'react-native'; import { Card, Header, Pill, Screen } from '@/components/ui'; import { assignments } from '@/data/mock'; import { colors } from '@/constants/theme';
-export default function Page(){return <Screen><Header title="Assignments" subtitle="Your current school work" back onBack={()=>router.back()}/>assignments.map(x=><Card key={x.title} style={s.card}><Pill label={x.status} tone={x.status==='Submitted'?'green':'yellow'}/><Text style={s.title}>{x.title}</Text><Text style={s.sub}>{x.subject} · Due {x.due}</Text></Card>)</Screen>}
-const s=StyleSheet.create({card:{marginBottom:9},row:{flexDirection:'row',gap:18,alignItems:'center',marginBottom:9},time:{fontSize:18,fontWeight:'900',color:colors.red},title:{fontSize:16,fontWeight:'900',marginTop:10},sub:{color:colors.muted,marginTop:5},link:{color:colors.red,fontWeight:'900',marginTop:14}})
+import { Redirect } from 'expo-router';
+export default function AssignmentsRedirect() { return <Redirect href="/student/learning" />; }

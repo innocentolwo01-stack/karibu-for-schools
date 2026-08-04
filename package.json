@@ -1,13 +1,15 @@
 {
   "name": "karibu-for-schools",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "typecheck": "tsc --noEmit",
-    "build:preview": "eas build --platform android --profile preview"
+    "build:preview": "eas build --platform android --profile preview",
+    "check": "npm run validate:routes && npx expo-doctor && tsc --noEmit",
+    "validate:routes": "node scripts/validate-routes.mjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

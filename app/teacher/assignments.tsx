@@ -1,3 +1,57 @@
-import { useState } from 'react'; import { router } from 'expo-router'; import { StyleSheet, Text, TextInput } from 'react-native'; import { Button, Card, Header, Screen, Section } from '@/components/ui'; import { assignments } from '@/data/mock'; import { colors } from '@/constants/theme';
-export default function TeacherAssignments(){const [title,setTitle]=useState('');const [created,setCreated]=useState<string[]>([]);return <Screen><Header title="Assignments" subtitle="Create and review class work" back onBack={()=>router.back()}/><Card><Text style={s.label}>New assignment title</Text><TextInput value={title} onChangeText={setTitle} style={s.input} placeholder="e.g. Photosynthesis worksheet"/><Button label="Publish assignment" disabled={!title.trim()} onPress={()=>{setCreated([title,...created]);setTitle('')}}/></Card><Section title="Published"/>{[...created.map(x=>({title:x,subject:'Biology',due:'New'})),...assignments].map((x,i)=><Card key={`${x.title}-${i}`} style={s.item}><Text style={s.title}>{x.title}</Text><Text style={s.sub}>{x.subject} · Due {x.due}</Text></Card>)}</Screen>}
-const s=StyleSheet.create({label:{fontWeight:'900',marginBottom:8},input:{height:52,borderWidth:1,borderColor:colors.border,borderRadius:14,paddingHorizontal:14,marginBottom:12},item:{marginBottom:8},title:{fontWeight:'900'},sub:{color:colors.muted,marginTop:5}})
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, Field, Header, Pill, Screen, Section, Segmented } from '@/components/ui';
+import { colors } from '@/constants/theme';
+import { useApp } from '@/context/AppContext';
+
+const toneFor = (status: string) => status === 'Marked' || status === 'Submitted' ? 'green' : status === 'In progress' ? 'blue' : status === 'Returned for changes' ? 'red' : 'yellow';
+
+export default function TeacherAssignments() {
+  const { data, createAssignment, updateAssignmentStatus } = useApp();
+  const [mode, setMode] = useState<'list' | 'create'>('list');
+  const [title, setTitle] = useState('Photosynthesis investigation');
+  const [subject, setSubject] = useState('Biology');
+  const [due, setDue] = useState('14 Aug');
+  const [instructions, setInstructions] = useState('Complete the investigation report and include one labelled diagram.');
+  const [published, setPublished] = useState(false);
+  const [attached, setAttached] = useState(false);
+  const publish = () => {
+    createAssignment(title, subject, due, { instructions, attachment: attached ? `${title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-resource.pdf` : undefined });
+    setPublished(true);
+    setMode('list');
+  };
+  return (
+    <Screen>
+      <Header title="Assignments" subtitle="Create, review and mark class work" back onBack={() => router.back()} />
+      <Segmented value={mode} onChange={setMode} options={[{ value: 'list', label: 'Published and submissions' }, { value: 'create', label: 'Create assignment' }]} />
+      {published ? <Card style={{ backgroundColor: colors.paleGreen, marginTop: 12 }}><Text style={{ color: colors.green, fontWeight: '900' }}>✓ Assignment published and student notification created.</Text></Card> : null}
+      {mode === 'create' ? (
+        <>
+          <Section title="Assignment details" />
+          <Field label="Title" value={title} onChangeText={setTitle} />
+          <Field label="Subject" value={subject} onChangeText={setSubject} />
+          <Field label="Due date" value={due} onChangeText={setDue} />
+          <Field label="Instructions" value={instructions} onChangeText={setInstructions} multiline />
+          <Button label={attached ? '✓ Resource attached' : 'Attach assignment resource'} variant={attached ? 'green' : 'outline'} icon="attach" onPress={() => setAttached(!attached)} />
+          <View style={{ marginTop: 10 }}><Button label="Publish assignment" disabled={!title.trim() || !subject.trim() || !due.trim()} onPress={publish} /></View>
+        </>
+      ) : (
+        <>
+          <Section title="Published assignments" action="Create new" onAction={() => setMode('create')} />
+          {data.assignments.map(assignment => <Card key={assignment.id} style={styles.assignment}><View style={styles.top}><Pill label={assignment.status.toUpperCase()} tone={toneFor(assignment.status) as never} /><Text style={styles.due}>Due {assignment.due}</Text></View><Text style={styles.title}>{assignment.title}</Text><Text style={styles.sub}>{assignment.subject}</Text>{assignment.status === 'Submitted' ? <View style={styles.actions}><Button label="Mark 86%" variant="green" onPress={() => updateAssignmentStatus(assignment.id, 'Marked', { score: 86, feedback: 'Strong work. Your explanation is clear and the diagram is accurate.' })} /><Button label="Return for changes" variant="outline" onPress={() => updateAssignmentStatus(assignment.id, 'Returned for changes', { feedback: 'Add one labelled diagram and resubmit.' })} /></View> : <Pressable onPress={() => router.push(`/student/assignment/${assignment.id}` as never)}><Text style={styles.open}>Preview student view →</Text></Pressable>}</Card>)}
+        </>
+      )}
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  assignment: { marginBottom: 10 },
+  top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  due: { color: colors.muted, fontSize: 12 },
+  title: { fontSize: 18, fontWeight: '900', marginTop: 13 },
+  sub: { color: colors.muted, marginTop: 5 },
+  open: { color: colors.red, fontWeight: '900', marginTop: 13 },
+  actions: { gap: 8, marginTop: 15 },
+});

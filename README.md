@@ -1,36 +1,49 @@
-# Karibu For Schools v0.2
+# Karibu For Schools v0.3
 
-Android-first, installable preview prototype. It does not use Expo Go or expo-dev-client.
+A full interactive Android test build for parents, students and teachers. It installs as a normal application and does not require Expo Go.
 
-## What works in this prototype
-- Branded splash, welcome and three-step onboarding
-- Persistent onboarding and demo session
-- Parent, student and teacher logins and role dashboards
-- Parent: child overview, performance, attendance, reports, fees, trips, trip consent, demo payments, receipts and appointments
-- Student: subjects, assignments, tests, results and timetable
-- Teacher: classes, register, assignments, results and parent appointments
-- Time-based personalised greetings
-- Local demo data and state persistence
+## Test accounts
 
-## Demo accounts
 School code: `GREENHILL`
 
-- Parent: `PARENT001`
-- Student: `IA9TDJM`
-- Teacher: `TCH00427`
-- Any password works in this prototype.
+| Role | ID | Password |
+|---|---|---|
+| Parent | `PARENT001` | Any non-empty password |
+| Student | `IA9TDJM` | Any non-empty password |
+| Teacher | `TCH00427` | Any non-empty password |
 
-## Build an installed APK in the cloud
+The **More** screen lets testers switch roles without losing the shared sandbox data.
+
+## Complete test journeys
+
+- Native splash, welcome and four-step onboarding
+- Persistent login, onboarding, role, child selection and app state
+- Smooth role-specific bottom navigation and native stack transitions
+- Parent: multiple children, academic progress, attendance, reports, assignments, payments, trips, consent, appointments and messages
+- Student: timetable, subjects, assignments, submissions, feedback, results, QR attendance, digital ID and messages
+- Teacher: classes, manual attendance, dynamic QR attendance, assignments, marking, markbook, appointments, availability and messages
+- Appointment booking by child and subject with video, phone and in-person meeting simulations
+- Sandbox payments with successful, pending and failed outcomes, receipts, retries and refund simulation
+- Interactive transport, digital ID, visitors, cafeteria, school shop, library, boarding, admissions, alumni, fundraising, integrations, reporting, transfers, NFC and AI-assistance modules
+- In-app notifications and deep links
+- Local persistence through AsyncStorage
+
+## Build the preview APK
 
 ```bash
 npm install
-npx eas-cli@latest build --platform android --profile preview
+npm run typecheck
+npx eas-cli@latest build --platform android --profile preview --clear-cache
 ```
 
-When the build finishes, install it on the running emulator:
+Install the completed APK on the running Android emulator:
 
 ```bash
 npx eas-cli@latest build:run --platform android
 ```
 
-This creates a normal app icon and launches without Expo Go. Real mobile-money/card transactions, live school data and authentication still require backend/provider integration.
+## Test boundaries
+
+This build uses controlled sandbox adapters. No real money is transferred, no real school records are changed, and no external Google Meet, Teams, Zoom, SMS, government or GPS provider is contacted. The internal workflows, state changes, receipts, attendance records, meeting confirmations and notifications are functional and testable.
+
+See `TESTING.md` for the recommended acceptance test sequence.

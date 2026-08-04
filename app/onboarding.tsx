@@ -1,9 +1,45 @@
-import { useState } from 'react'; import { router } from 'expo-router'; import { StyleSheet, Text, View } from 'react-native'; import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '@/components/ui'; import { colors } from '@/constants/theme'; import { useApp } from '@/context/AppContext';
-const slides=[
- {emoji:'📚',title:'See the full picture',body:'View performance, reports, attendance, assignments, behaviour and timetables for every linked child.'},
- {emoji:'💳',title:'Pay without the queues',body:'Pay fees, trips and other school charges, then keep every receipt and statement in one place.'},
- {emoji:'🤝',title:'Stay connected',body:'Receive notices, give trip consent and book structured appointments with teachers.'},
+import { useState } from 'react';
+import { router } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button, StepBar } from '@/components/ui';
+import { colors } from '@/constants/theme';
+import { useApp } from '@/context/AppContext';
+
+const slides = [
+  { emoji: '📚', title: 'Know what needs attention', body: 'See learning, reports, attendance, behaviour, timetables and school updates for every linked child.' },
+  { emoji: '💳', title: 'Payments without queues', body: 'Pay fees, trips, meals and school-shop orders, then keep statements and receipts in one place.' },
+  { emoji: '📅', title: 'Book teachers properly', body: 'Choose a child, subject, teacher, meeting type and available calendar slot.' },
+  { emoji: '🚌', title: 'The complete school day', body: 'Transport, digital IDs, library, cafeteria, boarding and future school modules are ready to explore.' },
 ];
-export default function Onboarding(){const [i,setI]=useState(0); const {finishOnboarding}=useApp(); const next=async()=>{if(i<slides.length-1)setI(i+1);else{await finishOnboarding();router.replace('/login')}}; const x=slides[i]; return <SafeAreaView style={s.safe}><View style={s.skip}><Text onPress={async()=>{await finishOnboarding();router.replace('/login')}}>Skip</Text></View><View style={s.art}><Text style={s.emoji}>{x.emoji}</Text></View><Text style={s.title}>{x.title}</Text><Text style={s.body}>{x.body}</Text><View style={s.dots}>{slides.map((_,n)=><View key={n} style={[s.dot,i===n&&s.active]}/>)}</View><View style={{marginTop:'auto'}}><Button label={i===slides.length-1?'Continue to login':'Continue'} onPress={next}/></View></SafeAreaView>}
-const s=StyleSheet.create({safe:{flex:1,backgroundColor:colors.white,padding:24},skip:{alignItems:'flex-end',marginTop:8},art:{height:310,borderRadius:32,backgroundColor:colors.paleYellow,alignItems:'center',justifyContent:'center',marginTop:35},emoji:{fontSize:105},title:{fontSize:34,fontWeight:'900',marginTop:36},body:{fontSize:17,lineHeight:25,color:colors.muted,marginTop:12},dots:{flexDirection:'row',gap:7,marginTop:25},dot:{width:8,height:8,borderRadius:4,backgroundColor:'#D6D6DA'},active:{width:28,backgroundColor:colors.red}})
+
+export default function Onboarding() {
+  const [index, setIndex] = useState(0);
+  const { finishOnboarding } = useApp();
+  const slide = slides[index];
+  const complete = async () => {
+    await finishOnboarding();
+    router.replace('/login');
+  };
+  return (
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.skip}><Text onPress={complete} style={{ fontWeight: '800' }}>Skip</Text></View>
+      <StepBar current={index + 1} total={slides.length} />
+      <View style={styles.art}><Text style={styles.emoji}>{slide.emoji}</Text></View>
+      <Text style={styles.title}>{slide.title}</Text>
+      <Text style={styles.body}>{slide.body}</Text>
+      <View style={{ marginTop: 'auto' }}>
+        <Button label={index === slides.length - 1 ? 'Continue to login' : 'Continue'} onPress={() => index < slides.length - 1 ? setIndex(index + 1) : void complete()} />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.white, padding: 24 },
+  skip: { alignItems: 'flex-end', marginTop: 8, marginBottom: 16 },
+  art: { height: 300, borderRadius: 32, backgroundColor: colors.paleYellow, alignItems: 'center', justifyContent: 'center', marginTop: 20 },
+  emoji: { fontSize: 105 },
+  title: { fontSize: 34, lineHeight: 39, fontWeight: '900', marginTop: 34 },
+  body: { fontSize: 17, lineHeight: 25, color: colors.muted, marginTop: 12 },
+});
