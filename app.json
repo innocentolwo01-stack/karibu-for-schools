@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Karibu For Schools",
+    "slug": "karibu-for-schools",
+    "scheme": "karibuforschools",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#111111"
+        }
+      ]
+    ],
+    "android": {
+      "package": "global.karibu.forschools",
+      "versionCode": 2,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#111111"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "global.karibu.forschools",
+      "supportsTablet": true
+    }
+  }
+}
