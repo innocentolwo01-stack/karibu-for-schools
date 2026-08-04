@@ -31,6 +31,12 @@
     "ios": {
       "bundleIdentifier": "global.karibu.forschools",
       "supportsTablet": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c22e17a1-aa9a-4527-bebf-28e12bdba6c8"
+      }
     }
   }
 }
