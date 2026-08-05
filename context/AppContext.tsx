@@ -178,9 +178,9 @@ const initialData: DemoData = {
 
 const AppContext = createContext<AppState | null>(null);
 const KEYS = {
-  onboarded: 'kfs_v03_onboarded',
-  session: 'kfs_v03_session',
-  data: 'kfs_v03_data',
+  onboarded: 'kfs_v04_onboarded',
+  session: 'kfs_v04_session',
+  data: 'kfs_v04_data',
 };
 
 export function AppProvider({ children: reactChildren }: { children: React.ReactNode }) {
